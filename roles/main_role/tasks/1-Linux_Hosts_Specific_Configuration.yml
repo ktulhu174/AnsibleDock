@@ -75,7 +75,7 @@
   #As well as auditing the normal Linux file system and system calls, you should also audit all Docker related files and directories. The Docker daemon runs with root privileges and its behaviour depends on some key files and directories. /run/containerd is one such directory. As it holds all the information about containers it should be audited.
 - name: auditing is configured for the Docker files and directories
   when:
-    cis_conf.stat.exists #and cis_rules_text.stdout.find('-a exit,always -F path=/run/containerd -F perm=war -k docker') == -1
+    cis_conf.stat.exists and cis_rules_text.stdout.find('-a exit,always -F path=/run/containerd -F perm=war -k docker') == -1
   ansible.builtin.lineinfile:
     path: /etc/audit/rules.d/cis.rules
     line: -a exit,always -F path=/run/containerd -F perm=war -k docker
