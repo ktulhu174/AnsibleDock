@@ -1,0 +1,99 @@
+- name: read mount file
+  shell: cat /proc/mounts
+  changed_when: false
+  register: mnt_point
+
+- name: if mnt_point valid
+  when:
+    mount_point == true
+  failed_when: mnt_point.stdout.find('/var/lib/docker\s') == -1
+  debug: msg="mount point not valid"
+  ignore_errors: yes
+
+- name: check docker group
+  shell: getent group docker
+  changed_when: false
+  register: docker_grp
+  when:
+    docker_group == true
+  failed_when: docker_grp.stdout.find('') == -1
+  ignore_errors: yes
+
+- name: Check that the cis.rules exists
+  stat:
+    path: /etc/audit/rules.d/cis.rules
+  register: cis_conf
+  when:
+    auditd_conf == true
+
+- name: create cis.rules if not exist
+  file:
+    path: "/etc/audit/rules.d/cis.rules"
+    state: touch
+  when:
+    not cis_conf.stat.exists
+
+- name: get text from cis.rules
+  shell: cat /etc/audit/audit.rules 
+  register: cis_rules_text
+  when:
+    auditd_conf == true
+
+    # 1.1.3
+- name: auditing is configured for the Docker daemon
+  when:
+    auditd_conf == true and cis_rules_text.stdout.find('-w /usr/bin/dockerd -k docker') == -1
+  ansible.builtin.lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: -w /usr/bin/dockerd -k docker
+  ignore_errors: yes
+
+  #1.1.4
+- name: auditing is configured for the Docker files and directories
+  when:
+    auditd_conf == true and cis_rules_text.stdout.find('-a exit,always -F path=/run/containerd -F perm=war -k docker') == -1
+  ansible.builtin.lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: -a exit,always -F path=/run/containerd -F perm=war -k docker
+  ignore_errors: yes
+
+
+  #1.1.5
+- name: auditing is configured for the Docker daemon
+  when:
+    auditd_conf == true and cis_rules_text.stdout.find('-a exit,always -F path=/var/lib/docker -F perm=war -k docker') == -1
+  ansible.builtin.lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: -a exit,always -F path=/var/lib/docker -F perm=war -k docker
+  ignore_errors: yes
+
+  #1.1.6
+- name: auditing is configured for the Docker daemon
+  when:
+    auditd_conf == true and cis_rules_text.stdout.find('-w /etc/docker -k docker') == -1
+  ansible.builtin.lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: -w /etc/docker -k docker
+  ignore_errors: yes
+  
+  #1.1.7
+  - name: auditing is configured for the Docker daemon
+    when:
+      auditd_conf == true and cis_rules_text.stdout.find('') == -1
+    ansible.builtin.lineinfile:
+      path: /etc/audit/rules.d/cis.rules
+      line:
+    ignore_errors: yes
+
+
+ 
+
+ 
+ 
+
+
+
+  #------------------------------------------------
+- name: Check that the somefile.conf exists
+  stat:
+    path: /etc/fstab
