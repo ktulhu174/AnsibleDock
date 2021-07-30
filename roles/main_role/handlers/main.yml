@@ -1,0 +1,6 @@
+---
+# handlers file for main_role
+- name: restart auditd
+  ansible.builtin.service:
+    name: auditd
+    state: restarted

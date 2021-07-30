@@ -1,0 +1,3 @@
+---
+# tasks file for main_role
+- include: 1-Linux_Hosts_Specific_Configuration.yml

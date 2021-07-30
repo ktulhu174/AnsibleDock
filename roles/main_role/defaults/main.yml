@@ -1,0 +1,6 @@
+---
+# defaults file for main_role
+mount_point: true
+docker_group: true
+auditd_logging: true
+auditd_conf: true

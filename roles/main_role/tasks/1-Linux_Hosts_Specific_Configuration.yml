@@ -1,0 +1,93 @@
+#1.1 Linux Hosts Specific Configuration
+#This section contains recommendations that securing Linux Hosts running Docker Containers.
+#1.1.1 Ensure a separate partition for containers has been created (Automated)
+#Profile Applicability:
+        #• Level 1 - Linux Host OS Description:
+        #All Docker containers and their data and metadata is stored under /var/lib/docker directory. By default, /var/lib/docker should be mounted under either the / or /var partitions dependent on how the Linux operating system in use is configured.
+- name: read mount file
+  shell: cat /proc/mounts
+  changed_when: false
+  register: mnt_point
+
+- name: if mnt_point valid
+  when:
+    mount_point == true
+  failed_when: mnt_point.stdout.find('/var/lib/docker\s') == -1
+  debug: msg="mount point not valid"
+  ignore_errors: yes
+
+  #1.1.2 Ensure only trusted users are allowed to control Docker daemon (Automated)
+  #Profile Applicability:
+        #• Level 1 - Linux Host OS Description:
+        #The Docker daemon currently requires access to the Docker socket which is, by default, owned by the user root and the group docker.
+- name: check docker group
+  shell: getent group docker
+  changed_when: false
+  register: docker_grp
+  when:
+    docker_group == true
+  failed_when: docker_grp.stdout.find('') == -1
+  ignore_errors: yes
+
+  #preparing to check auditd config
+
+- name: Check that the cis.conf exists
+  stat:
+    path: /etc/audit/rules.d/cis.rules
+  register: cis_conf
+  when:
+    auditd_conf == true
+
+- name: create cis.conf if not exist
+  file:
+    path: "/etc/audit/rules.d/cis.rules"
+    state: touch
+    #set_fact:
+          #cis_conf.stat.exists == true
+  when:
+    not cis_conf.stat.exists
+
+- name: get text from cis.rules
+  shell: cat /etc/audit/audit.rules 
+  register: cis_rules_text
+  when:
+          cis_conf.stat.exists
+
+#1.1.3 Ensure auditing is configured for the Docker daemon (Automated)
+  #Profile Applicability:
+        #• Level 1 - Linux Host OS Description:
+        #Audit all Docker daemon activities.
+#Rationale:
+#As well as auditing the normal Linux file system and system calls, you should also audit the Docker daemon. Because this daemon runs with root privileges. It is very important to audit its activities and usage.    
+
+- name: auditing is configured for the Docker daemon
+  when:
+    cis_conf.stat.exists and cis_rules_text.stdout.find('-w /usr/bin/dockerd -k docker') == -1
+  ansible.builtin.lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: -w /usr/bin/dockerd -k docker
+  ignore_errors: yes
+
+  #1.1.4 Ensure auditing is configured for Docker files and directories - /run/containerd (Automated)
+  #Profile Applicability:
+  #• Level 2 - Linux Host OS Description:
+  #Audit /run/containerd. Rationale:
+  #As well as auditing the normal Linux file system and system calls, you should also audit all Docker related files and directories. The Docker daemon runs with root privileges and its behaviour depends on some key files and directories. /run/containerd is one such directory. As it holds all the information about containers it should be audited.
+- name: auditing is configured for the Docker files and directories
+  when:
+    cis_conf.stat.exists #and cis_rules_text.stdout.find('-a exit,always -F path=/run/containerd -F perm=war -k docker') == -1
+  ansible.builtin.lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: -a exit,always -F path=/run/containerd -F perm=war -k docker
+  ignore_errors: yes
+  notify:
+  - restart auditd
+
+
+  #test
+- name: Check that the somefile.conf exists
+  stat:
+    path: /etc/fstab
+
+
+
