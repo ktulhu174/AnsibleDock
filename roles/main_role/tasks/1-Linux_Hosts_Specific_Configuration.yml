@@ -79,14 +79,14 @@
   #1.1.7
   - name: auditing is configured for the Docker daemon
     when:
-      auditd_conf == true and cis_rules_text.stdout.find('') == -1
+      auditd_conf == true and cis_rules_text.stdout.find('-w /usr/lib/systemd/system/docker.service -k docker') == -1
     ansible.builtin.lineinfile:
       path: /etc/audit/rules.d/cis.rules
-      line:
+      line: -w /usr/lib/systemd/system/docker.service -k docker 
     ignore_errors: yes
 
 
- 
+    #sadsadsadsadsadsadasdasdasd 
 
  
  
