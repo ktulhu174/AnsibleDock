@@ -83,15 +83,104 @@
 
   
  
-#2.9
-- name: 2.6Ensure aufs storage driver is not used
+#2.9Enable user namespace support (надо ли создать отдельного юзера для контейнеров?)
+#If the container 
+#images that you are using have a pre-defined non-root user, this recommendation may be 
+#skipped as this feature is still in its infancy, and might result in unpredictable issues or 
+#difficulty in configuration.
+
+
+
+
+#2.10 Ensure the default cgroup usage has been confirmed (Надо ли создать отдельную группу для контейнеров?)
+#The --cgroup-parent option allows you to set the default cgroup parent to use for all 
+#containers. If there is no specific usage requirement for this, the setting should be left at its 
+#default
+#The default setting is in line with good security practice and can be left in situ.
+
+
+
+#2.11 Ensure base device size is not changed until needed
+#Do not set --storage-opt dm.basesize until needed.
+
+  
+
+
+
+#2.12 Ensure that authorization for Docker client commands is enabled(какой плагин надо установить для авторизации докера?)
+#Third party integrations of Docker may implement their own authorization models to 
+#require authorization with the Docker daemon outside of docker's native authorization 
+#plugin (i.e. Kubernetes, Cloud Foundry, Openshift).
+
+
+
+
+
+#2.13
+- name: 2.13Ensure centralized and remote logging is configured
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}' 
+    line: '"log-driver": "syslog",'
+#    line: '"log-opts": { "syslog-address": "udp://198.51.100.33:514" },'
+  ignore_errors: yes
+
+
+
+#2.14
+- name: 2.14 Ensure containers are restricted from acquiring new privileges 
   ansible.builtin.lineinfile:
     path: /etc/docker/daemon.json
     insertbefore: '}'
-    line: '"storage-driver": "aufs",'
+    line: '"no-new-privileges": true,'
   ignore_errors: yes
   
+
+#2.15
+- name: 2.15 Ensure live restore is enabled
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}'
+    line: '"live-restore": true,'
+  ignore_errors: yes
+                          
+
+#2.16
+- name: 2.16 Ensure Userland Proxy is Disabled
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}'
+    line: '"userland-proxy": false'
+  ignore_errors: yes
+
  
+#2.17
+#- name: 2.17 Ensure that a daemon-wide custom seccomp profile is applied if appropriate(By default, Docker applies a default seccomp profile.)
+#  shell: docker info --format '{{ .SecurityOptions }}'
+#  register: info1
+#  ignore_errors: yes
+
+  #- name: help for 2.17
+  #  debug: msg="{{info1.stdout}}"
+  #  ignore_errors: yes
+
+#2.18
+#- name: 2.18 Ensure that experimental features are not implemented in production(By default, experimental features are not activated in the Docker daemon)
+#  shell: 'docker version --format "{{ .Server.Experimental }}"'
+#  register: info2
+#  ignore_errors: yes
+  
+  #- name: help for 2.18
+  #  debug: msg="{{info2.stdout}}"  
+  #  ignore_errors: yes
+
+#restart docker (сделал через стоп и страрт потому что на моей машине после простого ресрта не подключался Daemon.json)
+- name: restart docker
+  command: systemctl stop docker.socket
+  command: systemctl stop docker
+  command: systemctl start docker.socket
+  command: systemctl start docker 
+  ignore_errors: yes
 
   #test
 - name: Check that the somefile.conf exists
