@@ -1,5 +1,99 @@
 #2 Docker daemon configuration
 
 #2.1 
-- name:
 
+- name: Check that the daemon.json exists
+  stat:
+    path: /etc/docker/daemon.json
+  register: docker_conf
+  when:
+          docker_daemon_json == true
+
+- name: create daemon.json if not exist
+  file:
+    path: "/etc/docker/daemon.json"
+    state: touch
+  when:
+    not docker_conf.stat.exists
+
+- name: get text from daemon.json
+  shell: cat /etc/docker/daemon.json 
+  register: daemon_json_text
+  when:
+    docker_daemon_json == true
+
+- name: create skobki
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    line: '{'
+  ignore_errors: yes
+
+- name: create skobki2
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    line: '}'
+  ignore_errors: yes  
+
+#2.2
+- name: 2.2Ensure network traffic is restricted between containers on the default bridge
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}'
+    line: '"icc": false,'
+  ignore_errors: yes
+
+#2.3
+- name: 2.3Ensure the logging level is set to info
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}'
+    line: '"log-level": "info",'
+  ignore_errors: yes
+  
+#2.4 (((((((((((((((((((
+- name: 2.4Ensure Docker is allowed to make changes to iptables
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}'
+    line: '"iptables": false,'
+  ignore_errors: yes
+
+# 2.5  
+# skip
+#  Ensure insecure registries are not used
+#
+
+
+#2.6
+- name: 2.6Ensure aufs storage driver is not used 
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}'
+    line: '"storage-driver": "aufs",'
+  ignore_errors: yes
+  
+
+  #2.7
+  #2.7 Ensure TLS authentication for Docker daemon is configured 
+  #незнаю куда сохранять ключи
+
+
+#2.8
+#параметры системы 
+
+  
+ 
+#2.9
+- name: 2.6Ensure aufs storage driver is not used
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    insertbefore: '}'
+    line: '"storage-driver": "aufs",'
+  ignore_errors: yes
+  
+ 
+
+  #test
+- name: Check that the somefile.conf exists
+  stat:
+    path: /etc/fstab

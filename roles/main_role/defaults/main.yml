@@ -4,3 +4,4 @@ mount_point: true
 docker_group: true
 auditd_logging: true
 auditd_conf: true
+docker_daemon_json: true
