@@ -1,0 +1,12 @@
+- name: 3.1 Ensure that the docker.service file ownership is set to root:root
+  ansible.builtin.file:
+    path: /usr/lib/systemd/system/docker.service
+    owner: root
+    group: root  
+  ignore_errors: yes
+
+- name: 3.2 Ensure that docker.service file permissions are appropriately set
+  ansible.builtin.file:
+    path: /usr/lib/systemd/system/docker.service
+    mode: '0644'
+  ignore_errors: yes
