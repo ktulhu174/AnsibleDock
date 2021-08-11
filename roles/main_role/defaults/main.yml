@@ -5,3 +5,4 @@ docker_group: true
 auditd_logging: true
 auditd_conf: true
 docker_daemon_json: true
+docker_conf_file: true

@@ -154,7 +154,7 @@
   ignore_errors: yes
 
  
-#2.17
+#2.17( надо ли выводить информацию)
 #- name: 2.17 Ensure that a daemon-wide custom seccomp profile is applied if appropriate(By default, Docker applies a default seccomp profile.)
 #  shell: docker info --format '{{ .SecurityOptions }}'
 #  register: info1
