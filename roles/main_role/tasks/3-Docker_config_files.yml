@@ -10,3 +10,146 @@
     path: /usr/lib/systemd/system/docker.service
     mode: '0644'
   ignore_errors: yes
+  
+- name: 3.3 Ensure that docker.socket file ownership is set to root:root
+  ansible.builtin.file:
+    path:  /usr/lib/systemd/system/docker.socket
+    owner: root
+    group: root
+  ignore_errors: yes
+  
+- name: 3.4 Ensure that docker.socket file permissions are set to 644 or more restrictive
+  ansible.builtin.file:
+    path: /usr/lib/systemd/system/docker.socket
+    mode: '0644'
+  ignore_errors: yes
+  
+- name: 3.5 Ensure that the /etc/docker directory ownership is set to root:root 
+  ansible.builtin.file:
+    path: /etc/docker
+    owner: root
+    group: root
+  ignore_errors: yes
+  
+- name: 3.6 Ensure that /etc/docker directory permissions are set to 755 or more restrictively
+  ansible.builtin.file:
+    path: /etc/docker
+    mode: '0755'
+  ignore_errors: yes
+  
+#- name: 3.7 Ensure that registry certificate file ownership is set to root:root
+#  ansible.builtin.file:
+#    path: /etc/docker/certs.d/<registry-name>/* 
+#    owner: root
+#    group: root
+#  ignore_errors: yes
+  
+#- name: 3.8 Ensure that registry certificate file permissions are set to 444 or more restrictively
+#  ansible.builtin.file:
+#    path: /etc/docker/certs.d/<registry-name>
+#    mode: '0444'
+#  ignore_errors: yes
+  
+#- name: 3.9 Ensure that TLS CA certificate file ownership is set to root:root 
+#  ansible.builtin.file:
+#    path: <path to TLS CA certificate file>
+#    owner: root
+#    group: root
+#  ignore_errors: yes
+
+# - name: 3.10 Ensure that TLS CA certificate file permissions are set to 444 or more restrictively
+#   ansible.builtin.file:
+#     path: <path to TLS CA certificate file>
+#     mode: '0444'
+#   ignore_errors: yes
+  
+# - name: 3.11 Ensure that Docker server certificate file ownership is set to root:root
+#   ansible.builtin.file:
+#     path: <path to Docker server certificate file>
+#     owner: root
+#     group: root
+#   ignore_errors: yes
+  
+# - name: 3.12 Ensure that the Docker server certificate file permissions are set to 444 or more restrictively
+#   ansible.builtin.file:
+#     path:  <path to Docker server certificate file>
+#     mode: '0444'
+#   ignore_errors: yes
+  
+# - name: 3.13 Ensure that the Docker server certificate key file ownership is set to root:root
+#   ansible.builtin.file:
+#     path: <path to Docker server certificate key file>
+#     owner: root
+#     group: root
+#   ignore_errors: yes
+  
+# - name: 3.14 Ensure that the Docker server certificate key file permissions are set to 400
+#   ansible.builtin.file:
+#     path: <path to Docker server certificate key file>
+#     mode: '0400'
+#   ignore_errors: yes
+  
+- name: 3.15 Ensure that the Docker socket file ownership is set to root:docker
+  ansible.builtin.file:
+    path: /var/run/docker.sock
+    owner: root
+    group: root
+  ignore_errors: yes
+  
+- name: 3.16 Ensure that the Docker socket file permissions are set to 660 or more restrictively
+  ansible.builtin.file:
+    path: /var/run/docker.sock
+    mode: '0660'
+  ignore_errors: yes
+  
+- name: 3.17 Ensure that the daemon.json file ownership is set to root:root
+  ansible.builtin.file:
+    path: /etc/docker/daemon.json
+    owner: root
+    group: root
+  ignore_errors: yes
+  
+- name: 3.18 Ensure that daemon.json file permissions are set to 644 or more restrictive
+  ansible.builtin.file:
+    path: /etc/docker/daemon.json
+    mode: '0644'
+  ignore_errors: yes
+  
+- name: 3.19 Ensure that the /etc/default/docker file ownership is set to root:root
+  ansible.builtin.file:
+    path: /etc/default/docker
+    owner: root
+    group: root
+  ignore_errors: yes
+  
+- name: 3.20 Ensure that the /etc/sysconfig/docker file permissions are set to 644 or more restrictively
+  ansible.builtin.file:
+    path: /etc/sysconfig/docker
+    mode: '0644'
+  ignore_errors: yes
+  
+- name: 3.21  Ensure that the /etc/sysconfig/docker file ownership is set to root:root
+  ansible.builtin.file:
+    path: /etc/sysconfig/docker
+    owner: root
+    group: root
+  ignore_errors: yes
+  
+- name: 3.22 Ensure that the /etc/default/docker file permissions are set to 644 or more restrictively
+  ansible.builtin.file:
+    path: /etc/default/docker
+    mode: '0644'
+  ignore_errors: yes
+  
+- name: 3.23 Ensure that the Containerd socket file ownership is set to root:root
+  ansible.builtin.file:
+    path: /run/containerd/containerd.sock
+    owner: root
+    group: root
+  ignore_errors: yes
+  
+- name: 3.24 Ensure that the Containerd socket file permissions are set to 660 or more restrictively
+  ansible.builtin.file:
+    path: /run/containerd/containerd.sock
+    mode: '0660'
+  ignore_errors: yes
