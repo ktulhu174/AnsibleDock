@@ -1,0 +1,12 @@
+- name: 6.2 Ensure that container sprawl is avoided
+  shell: docker info | grep "Containers" 
+  register: Containers
+- name: 6.2.2  
+  shell: docker info | grep "Stopped"
+  register: Cstopped
+- name: 6.2.3
+  shell: docker info | grep "Running"
+  register: Crunning  
+  
+- name: help for 6.2
+  debug: msg="{{Containers.stdout}}| Containers{{Cstopped.stdout}}| Containers{{Crunning.stdout}}"

@@ -121,13 +121,15 @@
     owner: root
     group: root
   ignore_errors: yes
-  
+
+  # Net directorii  
 - name: 3.20 Ensure that the /etc/sysconfig/docker file permissions are set to 644 or more restrictively
   ansible.builtin.file:
     path: /etc/sysconfig/docker
     mode: '0644'
   ignore_errors: yes
-  
+
+  # Net directorii
 - name: 3.21  Ensure that the /etc/sysconfig/docker file ownership is set to root:root
   ansible.builtin.file:
     path: /etc/sysconfig/docker

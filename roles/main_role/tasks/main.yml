@@ -2,4 +2,6 @@
 # tasks file for main_role
 #- include: 1-Linux_Hosts_Specific_Configuration.yml
   #- include: 2-Docker_daemon_Configuration.yml
-- include: 3-Docker_config_files.yml
+  #- include: 3-Docker_config_files.yml
+  #- include: 4_Container_Images_and_Build_File_Configuration.yml
+- include: 6_Docker_Security_Operations.yml

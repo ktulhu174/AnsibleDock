@@ -1,0 +1,20 @@
+- name: 7.1 ure swarm mode is not Enabled, if not needed
+  shell: docker swarm leave
+
+- name: 7.2 Ensure that the minimum number of manager nodes have been created in a swarm
+  shell: docker info --format '{{ .Swarm.Managers }}' 
+  register: num
+  
+- name: help 7.2
+  shell: docker node ls | grep 'Leader' 
+  register: num_lid
+
+- name: help for 7.2
+  debug: msg="количество менеджеров{{num}},{{num_lid}}"
+
+
+  # 7.3 Ensure that swarm services are bound to a specific host interface
+  # By default, Docker swarm services listen on all available host interfaces
+
+
+
